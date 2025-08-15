@@ -49,7 +49,9 @@ jobs:
       # 6️⃣ Checkout gh-pages-src branch (create if it doesn't exist)
       - name: Checkout gh-pages-src
         run: |
+          ls
           git checkout gh-pages-src
+          ls
 
       # 7️⃣ Set up Python
       - name: Set up Python
