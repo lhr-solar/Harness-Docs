@@ -114,7 +114,9 @@ def generate_docs_and_nav():
 
     print("Auto-generated project pages with renamed files (underscores) and mkdocs.yml successfully.")
 
+
 if __name__ == "__main__":
+    print("starting documentation generation...")
     delete_docs_subdirs()
     copy_projects()
     generate_docs_and_nav()
