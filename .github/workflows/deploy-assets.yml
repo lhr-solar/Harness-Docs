@@ -64,3 +64,6 @@ jobs:
           git add projects mkdocs.yml
           git commit -m "Update projects and regenerate docs from main" || echo "No changes to commit"
           git push origin gh-pages-src
+
+      - name: Build and deploy site
+        run: mkdocs gh-deploy --force --clean
