@@ -23,10 +23,14 @@ jobs:
         id: vars
         run: echo "CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
 
-      # 3️⃣ If not main, checkout main to get latest assets
-      - name: Checkout main if needed
+      # 3️⃣ If not main, wipe current branch and checkout main to get latest assets
+      - name: Checkout main if needed and wipe current files
         run: |
           if [ "$CURRENT_BRANCH" != "main" ]; then
+            echo "Triggered from gh-pages-src, wiping current branch contents..."
+            # Remove everything except .git
+            find . -mindepth 1 -maxdepth 1 ! -name ".git" -exec rm -rf {} +
+            # Fetch and checkout main branch
             git fetch origin main:main
             git checkout main
           fi
