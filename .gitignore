@@ -1,0 +1,13 @@
+.vscode/*
+!.vscode/c_cpp_properties.json
+build
+site
+.dockerfile.hash
+.env
+.cache
+.idea
+
+.venv
+.DS_Store
+*.swp
+compile_commands.json
