@@ -11,36 +11,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the main branch
+      # 1️⃣ Checkout the repository
       - name: Checkout main branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2️⃣ Create gh-pages-src/projects folder
-      - name: Prepare gh-pages-src/projects
+      # 2️⃣ Prepare gh-pages-src branch
+      - name: Checkout gh-pages-src branch
         run: |
-          mkdir -p gh-pages-src/projects
+          git fetch origin gh-pages-src:gh-pages-src || git checkout --orphan gh-pages-src
+          git checkout gh-pages-src
 
-      # 3️⃣ Copy all subdirectories (excluding hidden files) into gh-pages-src/projects
+      # 3️⃣ Remove old projects folder
+      - name: Clear old projects
+        run: |
+          rm -rf projects
+          mkdir -p projects
+
+      # 4️⃣ Copy all subdirectories from main into gh-pages-src/projects
       - name: Copy assets
         run: |
           shopt -s dotglob
           for item in */ ; do
-            # Skip hidden folders
+            # Skip hidden folders/files
             [[ "$item" == .* ]] && continue
-            rsync -av --exclude='.*' "$item" gh-pages-src/projects/
+            rsync -av --exclude='.*' "$item" projects/
           done
 
-      # 4️⃣ Commit & push to gh-pages-src
+      # 5️⃣ Commit & push changes
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          cd gh-pages-src
-          git init
-          git remote add origin https://github.com/${{ github.repository }}.git
-          git checkout -B gh-pages-src
           git add projects
-          git commit -m "Update projects from main"
-          git push -f origin gh-pages-src
+          git commit -m "Update projects from main" || echo "No changes to commit"
+          git push origin gh-pages-src
