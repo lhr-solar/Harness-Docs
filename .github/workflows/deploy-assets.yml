@@ -49,7 +49,7 @@ jobs:
       # 6️⃣ Checkout gh-pages-src branch (create if it doesn't exist)
       - name: Checkout gh-pages-src
         run: |
-          ls
+          ls _temp
           git checkout gh-pages-src
           ls
 
