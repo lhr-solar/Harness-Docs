@@ -53,17 +53,33 @@ def generate_docs_and_nav():
             for project in sorted(os.listdir(vehicle_path)):
                 project_path = os.path.join(vehicle_path, project)
                 if os.path.isdir(project_path):
-                    pdf_exists = os.path.exists(os.path.join(project_path, "guide.pdf"))
-                    html_exists = os.path.exists(os.path.join(project_path, "model.html"))
+                    # Determine original file paths
+                    pdf_orig = next((f for f in os.listdir(project_path) if f.lower().endswith(".pdf")), None)
+                    html_orig = next((f for f in os.listdir(project_path) if f.lower().endswith(".html")), None)
+
+                    # Define new file names
+                    pdf_name = f"{vehicle}: {project} guide.pdf"
+                    html_name = f"{vehicle}: {project} model.html"
+
+                    # Rename files if they exist
+                    if pdf_orig:
+                        os.rename(os.path.join(project_path, pdf_orig),
+                                  os.path.join(project_path, pdf_name))
+                    if html_orig:
+                        os.rename(os.path.join(project_path, html_orig),
+                                  os.path.join(project_path, html_name))
+
+                    pdf_exists = os.path.exists(os.path.join(project_path, pdf_name))
+                    html_exists = os.path.exists(os.path.join(project_path, html_name))
 
                     # Generate index.md for the project
                     md_content = f"# {project} Harness Guide\n\n"
 
                     # Material attr_list buttons
                     if pdf_exists:
-                        md_content += f"[Open PDF](guide.pdf){{: .md-button .md-raised target=\"_blank\" }}\n\n"
+                        md_content += f"[Open PDF]({pdf_name}){{: .md-button .md-raised target=\"_blank\" }}\n\n"
                     if html_exists:
-                        md_content += f"[Open 3D Model](model.html){{: .md-button .md-raised target=\"_blank\" }}\n\n"
+                        md_content += f"[Open 3D Model]({html_name}){{: .md-button .md-raised target=\"_blank\" }}\n\n"
 
                     # Write index.md
                     index_md_path = os.path.join(project_path, "index.md")
@@ -93,7 +109,7 @@ def generate_docs_and_nav():
     with open("mkdocs.yml", "w", encoding="utf-8") as f:
         yaml.dump(mkdocs_config, f, sort_keys=False)
 
-    print("Auto-generated project pages with buttons and mkdocs.yml successfully.")
+    print("Auto-generated project pages with renamed files and mkdocs.yml successfully.")
 
 if __name__ == "__main__":
     delete_docs_subdirs()
