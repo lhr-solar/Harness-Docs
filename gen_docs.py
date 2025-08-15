@@ -53,7 +53,7 @@ def generate_docs_and_nav():
             for project in sorted(os.listdir(vehicle_path)):
                 project_path = os.path.join(DOCS_DIR, vehicle, project)
                 if os.path.isdir(project_path):
-                    # Determine original file paths
+                    print(f"Processing project: {project} for vehicle: {vehicle}")
                     pdf_orig = next((f for f in os.listdir(project_path) if f.lower().endswith(".pdf")), None)
                     html_orig = next((f for f in os.listdir(project_path) if f.lower().endswith(".html")), None)
 
