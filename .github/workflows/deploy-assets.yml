@@ -7,39 +7,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy-assets:
+  deploy-and-generate:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Checkout main branch
       - name: Checkout main branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2️⃣ Prepare gh-pages-src branch
+      # 2️⃣ Checkout gh-pages-src branch (create if doesn't exist)
       - name: Checkout gh-pages-src branch
         run: |
           git fetch origin gh-pages-src:gh-pages-src || git checkout --orphan gh-pages-src
           git checkout gh-pages-src
 
-      # 3️⃣ Remove old projects folder
-      - name: Clear old projects
+      # 3️⃣ Remove old _temp folder and create new one
+      - name: Prepare _temp folder
         run: |
-          rm -rf projects
-          mkdir -p projects
+          rm -rf _temp
+          mkdir -p _temp
 
-      # 4️⃣ Copy all subdirectories from main into gh-pages-src/projects
-      - name: Copy assets
+      # 4️⃣ Copy all subdirectories from main into _temp
+      - name: Copy assets to _temp
         run: |
           shopt -s dotglob
           for item in */ ; do
-            # Skip hidden folders/files
             [[ "$item" == .* ]] && continue
-            rsync -av --exclude='.*' "$item" projects/
+            rsync -av --exclude='.*' "$item" _temp/
           done
 
-       # 5️⃣ Set up Python
+      # 5️⃣ Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -47,17 +46,21 @@ jobs:
 
       # 6️⃣ Install dependencies
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install mkdocs mkdocs-material pyyaml
 
       # 7️⃣ Run gen_docs.py to generate index.md and mkdocs.yml
       - name: Generate MkDocs pages
         run: python gen_docs.py
 
-      # 8️⃣ Commit & push changes
+      # 8️⃣ Delete _temp folder after generation
+      - name: Clean up _temp folder
+        run: rm -rf _temp
+
+      # 9️⃣ Commit & push changes
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add projects docs mkdocs.yml
+          git add projects mkdocs.yml
           git commit -m "Update projects and regenerate docs from main" || echo "No changes to commit"
           git push origin gh-pages-src
