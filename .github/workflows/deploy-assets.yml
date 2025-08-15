@@ -37,11 +37,12 @@ jobs:
           rm -rf _temp
           mkdir -p _temp
 
-      # 5️⃣ Copy subdirectories (ignore hidden files/folders)
-      - name: Copy subdirectories to _temp
+       # 5️⃣ Copy top-level vehicle folders into _temp (ignore hidden folders)
+      - name: Copy vehicle folders to _temp
         run: |
           shopt -s dotglob
           for item in */ ; do
+            # skip hidden folders like .github
             [[ "$item" == .* ]] && continue
             rsync -av --exclude='.*' "$item" _temp/
           done
