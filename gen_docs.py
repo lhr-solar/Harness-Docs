@@ -18,9 +18,12 @@ def copy_projects():
     projects_path = os.path.join(os.getcwd(), PROJECTS_DIR)
     docs_path = os.path.join(os.getcwd(), DOCS_DIR)
 
+    print(f"Copying projects from {projects_path} to {docs_path}...")
+
     if os.path.exists(projects_path):
         for vehicle in os.listdir(projects_path):
             vehicle_src = os.path.join(projects_path, vehicle)
+            print(f"Processing vehicle: {vehicle}")
             if os.path.isdir(vehicle_src):
                 vehicle_dst = os.path.join(docs_path, vehicle)
                 os.makedirs(vehicle_dst, exist_ok=True)
