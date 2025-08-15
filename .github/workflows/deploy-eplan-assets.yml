@@ -1,0 +1,135 @@
+name: Deploy E-Plan Assets
+
+on:
+  push:
+    branches: [ eplan-assets ]
+  workflow_dispatch:
+
+jobs:
+  deploy-assets:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout eplan-assets branch
+      uses: actions/checkout@v4
+      with:
+        ref: eplan-assets
+        path: source
+    
+    - name: Checkout gh-pages branch
+      uses: actions/checkout@v4
+      with:
+        ref: gh-pages
+        path: gh-pages
+    
+    - name: Generate manifest
+      run: |
+        cd source
+        
+        # Function to generate JSON for a directory
+        generate_json() {
+          local dir="$1"
+          local indent="$2"
+          
+          echo "${indent}{"
+          echo "${indent}  \"name\": \"$(basename "$dir")\","
+          echo "${indent}  \"files\": ["
+          
+          # Add files (skip dotfiles and handle empty directories)
+          first_file=true
+          shopt -s nullglob  # Handle empty directories gracefully
+          for file in "$dir"/*; do
+            if [[ -f "$file" ]]; then
+              filename=$(basename "$file")
+              if [[ ! "$filename" =~ ^\. ]]; then
+                if [ "$first_file" = false ]; then
+                  echo ","
+                fi
+                echo -n "${indent}    { \"name\": \"$filename\" }"
+                first_file=false
+              fi
+            fi
+          done
+          echo ""
+          echo "${indent}  ],"
+          echo "${indent}  \"folders\": ["
+          
+          # Add folders (skip dotfiles)
+          first_folder=true
+          for item in "$dir"/*; do
+            if [[ -d "$item" ]]; then
+              foldername=$(basename "$item")
+              if [[ ! "$foldername" =~ ^\. ]]; then
+                if [ "$first_folder" = false ]; then
+                  echo ","
+                fi
+                generate_json "$item" "${indent}    "
+                first_folder=false
+              fi
+            fi
+          done
+          echo ""
+          echo "${indent}  ]"
+          echo -n "${indent}}"
+        }
+        
+        # Generate the manifest
+        echo "Generating manifest..."
+        generate_json "." "" > ../manifest.json
+        
+        # Pretty print the JSON (optional, for debugging)
+        echo "Generated manifest:"
+        cat ../manifest.json
+    
+    - name: Setup directories in gh-pages
+      run: |
+        cd gh-pages
+        mkdir -p manifests
+        mkdir -p generated-assets/eplan
+    
+    - name: Copy manifest to gh-pages
+      run: |
+        cp manifest.json gh-pages/manifests/eplan-manifest.json
+        echo "Manifest copied to manifests/eplan-manifest.json"
+    
+    - name: Copy top-level folders to gh-pages
+      run: |
+        cd source
+        
+        # Copy all top-level directories (excluding dotfiles)
+        for dir in */; do
+          if [[ -d "$dir" && ! "$(basename "$dir")" =~ ^\. ]]; then
+            echo "Copying folder: $dir"
+            cp -r "$dir" "../gh-pages/generated-assets/eplan/"
+          fi
+        done
+        
+        echo "All folders copied to generated-assets/eplan/"
+    
+    - name: Commit and push changes to gh-pages
+      run: |
+        cd gh-pages
+        
+        # Configure git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add changes
+        git add manifests/eplan-manifest.json
+        git add generated-assets/eplan/
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          # Commit changes
+          git commit -m "Update e-plan assets from eplan-assets branch
+          
+          - Updated manifest: manifests/eplan-manifest.json
+          - Updated assets: generated-assets/eplan/
+          - Source commit: ${{ github.sha }}"
+          
+          # Push changes
+          git push origin gh-pages
+          echo "Changes pushed to gh-pages branch"
+        fi
