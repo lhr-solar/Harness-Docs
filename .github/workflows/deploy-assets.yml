@@ -37,15 +37,14 @@ jobs:
           rm -rf _temp
           mkdir -p _temp
 
-      # 5️⃣ Copy top-level vehicle folders into _temp (ignore hidden folders)
+      # 5️⃣ Copy top-level vehicle folders into _temp (ignore hidden folders and _temp itself)
       - name: Copy vehicle folders to _temp
         run: |
           mkdir -p _temp
           shopt -s dotglob
           for item in *; do
-            # skip hidden files/folders
-            [[ "$item" == .* ]] && continue
-            # copy the entire folder or file into _temp
+            # skip hidden files/folders and _temp
+            [[ "$item" == .* || "$item" == "_temp" ]] && continue
             cp -r "$item" _temp/
           done
 
