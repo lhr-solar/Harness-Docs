@@ -12,68 +12,65 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout current branch
+      # 1️⃣ Checkout the branch that triggered the workflow
       - name: Checkout current branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # 2️⃣ Determine current branch
-      - name: Set current branch
+      # 2️⃣ Set CURRENT_BRANCH environment variable
+      - name: Determine current branch
         id: vars
         run: echo "CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
 
-      # 3️⃣ Checkout gh-pages-src branch (create if doesn't exist)
-      - name: Checkout gh-pages-src
+      # 3️⃣ If not main, checkout main to get latest assets
+      - name: Checkout main if needed
         run: |
-          git fetch origin gh-pages-src:gh-pages-src || git checkout --orphan gh-pages-src
-          git checkout gh-pages-src
+          if [ "$CURRENT_BRANCH" != "main" ]; then
+            git fetch origin main:main
+            git checkout main
+          fi
 
-      # 4️⃣ Remove old _temp folder and create new one
+      # 4️⃣ Prepare _temp folder
       - name: Prepare _temp folder
         run: |
           rm -rf _temp
           mkdir -p _temp
 
-      # 5️⃣ Copy assets depending on trigger branch
-      - name: Copy assets to _temp
+      # 5️⃣ Copy subdirectories (ignore hidden files/folders)
+      - name: Copy subdirectories to _temp
         run: |
-          if [ "$CURRENT_BRANCH" = "main" ]; then
-            echo "Triggered from main, copying current files"
-            shopt -s dotglob
-            for item in ../*/ ; do
-              [[ "$item" == .* ]] && continue
-              rsync -av --exclude='.*' "$item" _temp/
-            done
-          else
-            echo "Triggered from gh-pages-src, fetching main branch"
-            git fetch origin main:main
-            shopt -s dotglob
-            for item in ../main/* ; do
-              [[ "$item" == .* ]] && continue
-              rsync -av --exclude='.*' "$item" _temp/
-            done
-          fi
+          shopt -s dotglob
+          for item in */ ; do
+            [[ "$item" == .* ]] && continue
+            rsync -av --exclude='.*' "$item" _temp/
+          done
 
-      # 6️⃣ Set up Python
+      # 6️⃣ Checkout gh-pages-src branch (create if it doesn't exist)
+      - name: Checkout gh-pages-src
+        run: |
+          git fetch origin gh-pages-src:gh-pages-src || git checkout --orphan gh-pages-src
+          git checkout gh-pages-src
+
+      # 7️⃣ Set up Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
-      # 7️⃣ Install dependencies
+      # 8️⃣ Install dependencies
       - name: Install dependencies
-        run: pip install mkdocs mkdocs-material pyyaml
+        run: pip install -r requirements.txt
 
-      # 8️⃣ Run gen_docs.py to generate index.md and mkdocs.yml
-      - name: Generate MkDocs pages
+      # 9️⃣ Run gen_docs.py
+      - name: Generate MkDocs docs
         run: python gen_docs.py
 
-      # 9️⃣ Delete _temp folder after generation
+      # 🔟 Delete _temp folder
       - name: Clean up _temp folder
         run: rm -rf _temp
 
-      # 🔟 Commit & push changes
+      # 1️⃣1️⃣ Commit and push changes to gh-pages-src
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
@@ -82,6 +79,6 @@ jobs:
           git commit -m "Update projects and regenerate docs" || echo "No changes to commit"
           git push origin gh-pages-src
 
-      # 1️⃣1️⃣ Build and deploy site
+      # 1️⃣2️⃣ Build and deploy MkDocs to gh-pages
       - name: Build and deploy site
         run: mkdocs gh-deploy --force --clean
