@@ -4,10 +4,6 @@ theme:
   palette:
   - scheme: slate
     primary: blue
-nav:
-- Daybreak:
-  - MPPT Enclosure: Daybreak/MPPT Enclosure/index.md
-  - Motor Controller Enclosure: Daybreak/Motor Controller Enclosure/index.md
-  - Supplemental Battery Enclosure: Daybreak/Supplemental Battery Enclosure/index.md
+nav: []
 markdown_extensions:
 - attr_list
