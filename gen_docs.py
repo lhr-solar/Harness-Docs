@@ -3,6 +3,8 @@ import shutil
 import yaml
 
 DOCS_DIR = "docs"
+PROJECTS_DIR = "_temp"
+
 
 def delete_docs_subdirs():
     docs_path = os.path.join(os.getcwd(), DOCS_DIR)
@@ -13,7 +15,7 @@ def delete_docs_subdirs():
                 shutil.rmtree(item_path)
 
 def copy_projects():
-    projects_path = os.path.join(os.getcwd(), "projects")
+    projects_path = os.path.join(os.getcwd(), PROJECTS_DIR)
     docs_path = os.path.join(os.getcwd(), DOCS_DIR)
 
     if os.path.exists(projects_path):
