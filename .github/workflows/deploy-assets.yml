@@ -1,0 +1,46 @@
+name: Deploy Assets
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout the main branch
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2️⃣ Create gh-pages-src/projects folder
+      - name: Prepare gh-pages-src/projects
+        run: |
+          mkdir -p gh-pages-src/projects
+
+      # 3️⃣ Copy all subdirectories (excluding hidden files) into gh-pages-src/projects
+      - name: Copy assets
+        run: |
+          shopt -s dotglob
+          for item in */ ; do
+            # Skip hidden folders
+            [[ "$item" == .* ]] && continue
+            rsync -av --exclude='.*' "$item" gh-pages-src/projects/
+          done
+
+      # 4️⃣ Commit & push to gh-pages-src
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cd gh-pages-src
+          git init
+          git remote add origin https://github.com/${{ github.repository }}.git
+          git checkout -B gh-pages-src
+          git add projects
+          git commit -m "Update projects from main"
+          git push -f origin gh-pages-src
