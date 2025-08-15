@@ -49,7 +49,6 @@ jobs:
       # 6️⃣ Checkout gh-pages-src branch (create if it doesn't exist)
       - name: Checkout gh-pages-src
         run: |
-          git fetch origin gh-pages-src:gh-pages-src || git checkout --orphan gh-pages-src
           git checkout gh-pages-src
 
       # 7️⃣ Set up Python
