@@ -72,6 +72,8 @@ def generate_docs_and_nav():
                         os.rename(os.path.join(project_path, html_orig),
                                   os.path.join(project_path, html_name))
 
+                    print(f"Renamed {pdf_orig} to {pdf_name} and {html_orig} to {html_name} in {project_path}")
+
                     pdf_exists = os.path.exists(os.path.join(project_path, pdf_name))
                     html_exists = os.path.exists(os.path.join(project_path, html_name))
 
