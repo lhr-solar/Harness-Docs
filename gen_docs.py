@@ -51,15 +51,15 @@ def generate_docs_and_nav():
 
             # Walk through projects
             for project in sorted(os.listdir(vehicle_path)):
-                project_path = os.path.join(vehicle_path, project)
+                project_path = os.path.join(DOCS_DIR, vehicle, project)
                 if os.path.isdir(project_path):
                     # Determine original file paths
                     pdf_orig = next((f for f in os.listdir(project_path) if f.lower().endswith(".pdf")), None)
                     html_orig = next((f for f in os.listdir(project_path) if f.lower().endswith(".html")), None)
 
-                    # Define new file names
-                    pdf_name = f"{vehicle}: {project} guide.pdf"
-                    html_name = f"{vehicle}: {project} model.html"
+                    # Define new file names with underscores
+                    pdf_name = f"{vehicle}_{project}_guide.pdf"
+                    html_name = f"{vehicle}_{project}_model.html"
 
                     # Rename files if they exist
                     if pdf_orig:
@@ -109,7 +109,7 @@ def generate_docs_and_nav():
     with open("mkdocs.yml", "w", encoding="utf-8") as f:
         yaml.dump(mkdocs_config, f, sort_keys=False)
 
-    print("Auto-generated project pages with renamed files and mkdocs.yml successfully.")
+    print("Auto-generated project pages with renamed files (underscores) and mkdocs.yml successfully.")
 
 if __name__ == "__main__":
     delete_docs_subdirs()
