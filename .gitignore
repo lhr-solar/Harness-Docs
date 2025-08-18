@@ -13,3 +13,5 @@ site
 compile_commands.json
 
 _temp
+
+docs/Vehicles/*
