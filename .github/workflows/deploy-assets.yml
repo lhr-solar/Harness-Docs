@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - gh-pages-src
+      - mkdocs
   workflow_dispatch:
 
 jobs:
