@@ -1,4 +1,4 @@
-# Supplemental Battery Enclosure Harness Guide
+# Supplemental Battery Enclosure Guides
 
 [Open PDF](Daybreak_Supplemental Battery Enclosure_guide.pdf){: .md-button .md-raised target="_blank" }
 

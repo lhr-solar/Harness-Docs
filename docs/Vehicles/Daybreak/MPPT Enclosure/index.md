@@ -1,4 +1,4 @@
-# MPPT Enclosure Harness Guide
+# MPPT Enclosure Guides
 
 [Open PDF](Daybreak_MPPT Enclosure_guide.pdf){: .md-button .md-raised target="_blank" }
 

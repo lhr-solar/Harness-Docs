@@ -1,13 +1,23 @@
 site_name: Wire Harnessing Docs
 theme:
   name: material
+  favicon: favicon.ico
   palette:
   - scheme: slate
     primary: blue
 nav:
 - Daybreak:
-  - MPPT Enclosure: Daybreak/MPPT Enclosure/index.md
-  - Motor Controller Enclosure: Daybreak/Motor Controller Enclosure/index.md
-  - Supplemental Battery Enclosure: Daybreak/Supplemental Battery Enclosure/index.md
+  - Car Harness: Vehicles/Daybreak/Car Harness/index.md
+  - MPPT Enclosure: Vehicles/Daybreak/MPPT Enclosure/index.md
+  - Motor Controller Enclosure: Vehicles/Daybreak/Motor Controller Enclosure/index.md
+  - Supplemental Battery Enclosure: Vehicles/Daybreak/Supplemental Battery Enclosure/index.md
+plugins:
+- macros
+- search
 markdown_extensions:
 - attr_list
+extra_javascript:
+- https://code.jquery.com/jquery-3.6.0.min.js
+- https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js
+extra_css:
+- https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css

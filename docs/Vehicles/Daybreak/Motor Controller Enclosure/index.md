@@ -1,4 +1,4 @@
-# Motor Controller Enclosure Harness Guide
+# Motor Controller Enclosure Guides
 
 [Open PDF](Daybreak_Motor Controller Enclosure_guide.pdf){: .md-button .md-raised target="_blank" }
 
