@@ -1,10 +1,10 @@
 site_name: Wire Harnessing Docs
 theme:
   name: material
-  favicon: favicon.ico
   palette:
   - scheme: slate
     primary: blue
+  favicon: favicon.ico
 nav:
 - Daybreak:
   - Car Harness: Vehicles/Daybreak/Car Harness/index.md

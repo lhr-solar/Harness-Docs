@@ -7,7 +7,7 @@ import yaml
 
 
 DOCS_DIR = "docs"
-VEHICLES_DIR = "docs/vehicles"
+VEHICLES_DIR = "docs/Vehicles"
 TEMP_DIR = "_temp"
 
 
