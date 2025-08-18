@@ -53,10 +53,10 @@ jobs:
           done
 
       # 6️⃣ Checkout gh-pages-src branch (create if it doesn't exist)
-      - name: Checkout gh-pages-src
+      - name: Checkout mkdocs
         run: |
           ls _temp
-          git checkout gh-pages-src
+          git checkout mkdocs
           ls
 
       # 7️⃣ Set up Python
