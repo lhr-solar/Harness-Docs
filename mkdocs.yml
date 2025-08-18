@@ -7,7 +7,6 @@ theme:
   favicon: favicon.ico
 nav:
 - Daybreak:
-  - Car Harness: Vehicles/Daybreak/Car Harness/index.md
   - MPPT Enclosure: Vehicles/Daybreak/MPPT Enclosure/index.md
   - Motor Controller Enclosure: Vehicles/Daybreak/Motor Controller Enclosure/index.md
   - Supplemental Battery Enclosure: Vehicles/Daybreak/Supplemental Battery Enclosure/index.md
